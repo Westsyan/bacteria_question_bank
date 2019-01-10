@@ -1,0 +1,51 @@
+.page-header.navbar.navbar-fixed-top {
+    z-index: 100;
+}
+
+.logo{
+    text-shadow: 0 0 1px #FFFFFD;
+    color: #FFFFFD;
+    font-size: 19px
+}
+
+.logo-right {
+    color: #ababab;
+}
+
+.logo-left{
+    color: #FFFFFD;
+
+}
+
+.page-header-text {
+    font-size: 14px;
+    color: #FFFFFD;
+}
+
+.page-option :hover {
+    background-color: #3D3D3D;
+}
+
+.page-menu-right{
+    border-left: 1px dashed #535353;
+    width: 100px;
+    text-align: center;
+    height: 53px;
+    margin: 0;
+    padding: 0;
+    float: right;
+}
+
+.page-menu-left{
+    border-left: 1px dashed #535353;
+    width: 100px;
+    text-align: center;
+    height: 53px;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.action{
+    background-color: #EA3C00;
+}

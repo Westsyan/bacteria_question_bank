@@ -1,0 +1,45 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET         /                                       controllers.QuestionController.userBefore
+
+
+
+GET         /answerBefore                           controllers.QuestionController.answerBefore(id:Int)
+GET         /resultBefore                           controllers.QuestionController.resultBefore
+GET         /frontEnd/answerPage                    controllers.QuestionController.answerPage
+
+
+GET         /getResult                              controllers.QuestionController.getResult
+
+
+
+POST        /addUser                                controllers.QuestionController.addUser
+POST        /getQuestion                            controllers.QuestionController.getQuestion
+POST        /addResult                              controllers.QuestionController.addResult
+POST        /addRefreshResult                       controllers.QuestionController.addRefreshResult(id:String)
+
+
+GET         /background/index                       controllers.BackgroundController.index
+GET         /background/backgroundBefore            controllers.BackgroundController.backgroundBefore
+GET         /background/questionBefore              controllers.BackgroundController.questionBefore
+GET         /background/questionInfoBefore          controllers.BackgroundController.questionInfoBefore(id:Int)
+POST        /background/getChartsById               controllers.BackgroundController.getChartsById(id:Int)
+POST        /background/getQuestionById             controllers.BackgroundController.getQuestionById(id:Int)
+POST        /background/getAllQuestion              controllers.BackgroundController.getAllQuestion
+POST        /background/getFilterQuestion           controllers.BackgroundController.getFilterQuestion
+POST        /background/getAllResult                controllers.BackgroundController.getAllResult
+POST        /background/getFilterResult             controllers.BackgroundController.getFilterResult
+
+GET         /background/changePasswordBefore        controllers.AdminController.changePasswordBefore
+POST        /background/changePassword              controllers.AdminController.changePassword
+
+
+GET         /login/loginBefore                      controllers.AdminController.loginBefore
+GET         /login/login                            controllers.AdminController.login(account: String, password: String)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                           controllers.Assets.at(path="/public", file)

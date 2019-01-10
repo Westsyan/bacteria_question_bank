@@ -1,0 +1,90 @@
+<style>
+
+	.left-fork {
+        padding-left: 40px
+    }
+
+    .left-active {
+        background-color: #393631;
+        color: white !important;
+    }
+
+
+</style>
+
+
+
+<div class="page-sidebar-wrapper">
+    <div class="page-sidebar navbar-collapse collapse">
+        <ul class="page-sidebar-menu " data-auto-scroll="true" data-slide-speed="200" id="projects">
+
+@*
+            <li id="home" style="background-color: #2B2A28;
+                height: 40px">
+                <a href=''>
+                    <i class="fa fa-map-marker"></i>
+                    <span>按类型统计</span>
+                </a>
+            </li>
+*@
+
+            <li style="height: 40px;">
+                <a href='@routes.BackgroundController.backgroundBefore()' >
+                    <span class="left-fork">按背景统计</span>
+                </a>
+            </li>
+
+            <li style="height: 40px;" >
+                <a href='@routes.BackgroundController.questionBefore()'>
+                    <span class="left-fork">按题目统计</span>
+                </a>
+
+            </li>
+
+
+@*            <li style="background-color: #2B2A28;
+                height: 40px;display: none">
+                <a href=''>
+                    <i class="fa fa-clock-o"></i>
+                    <span>按时间统计</span>
+                </a>
+            </li>
+
+            <li style="height: 40px;display: none">
+                <a href='' >
+                    <span class="left-fork">按日流量统计</span>
+                </a>
+            </li>
+
+            <li style="height: 40px;display: none">
+                <a href='' >
+                    <span class="left-fork">按周流量统计</span>
+                </a>
+            </li>
+
+            <li style="height: 40px;display: none">
+                <a href='' >
+                    <span class="left-fork">按月流量统计</span>
+                </a>
+            </li>
+
+            <li style="height: 40px;display: none">
+                <a href='' >
+                    <span class="left-fork">按年流量统计</span>
+                </a>
+            </li>*@
+
+        </ul>
+    </div>
+</div>
+
+<script>
+
+
+</script>
+
+
+
+
+
+

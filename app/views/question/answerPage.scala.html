@@ -1,0 +1,301 @@
+@()(implicit session: Session)
+    @home.main("") {
+
+        <style>
+
+                th {
+                    font-size: 20px;
+                }
+
+                td {
+                    margin-left: 2em;
+                    font-size: 17px;
+                    vertical-align: bottom;
+                    height: 50px;
+                    border: 0px solid transparent !important;
+                    display: none;
+                }
+
+                .table {
+                    width: 500px;
+                }
+
+                td:hover {
+                    background-color: #F9F9F9;
+                }
+
+                .noHover{
+                    display: table;
+                }
+
+                .noHover:hover {
+                    background-color: white;
+                }
+
+                .selected {
+                    color: red;
+                }
+
+
+        </style>
+
+
+        <div id="contain" >
+
+            <h4><a onclick="rebackHome()"><i class="fa fa-arrow-left"></i> 返回首页</a></h4>
+
+            <h1 align="center" style="margin-top: 50px">在线测试</h1>
+
+            <table class="table" align="center" id="start" style="margin-top: 80px;
+                display: none;">
+                <thead>
+                    <tr><th style="text-align: center;
+                        border-bottom: 0px">请认真准备试题，准备好了么？</th></tr>
+                </thead>
+                <tr>
+                    <td style="height: 100px;
+                        width: 400px;
+                        text-align: center;
+                        vertical-align: middle" class="noHover">
+
+
+                        <a onclick="start()">
+                            <img src="/assets/images/start.gif" align="center" style="margin-top: 40px">
+                        </a>
+
+
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+
+        <div id="code"></div>
+
+
+        <script>
+
+                window.onbeforeunload = refresh();
+
+                $(function () {
+
+                    $.ajax({
+                        url: "@routes.QuestionController.getQuestion()",
+                        type: "post",
+                        dataType: "json",
+                        success: function (data) {
+                            $.each(data.row, function (a, v) {
+                                var i = a + data.num;
+                                var form = "<form id='form" + i + "' style='display: none;'></form>";
+                                $("#contain").append(form);
+
+                                $("#form" + i).html("\n" +
+                                        "        <div align=\"center\">\n" +
+                                        "            <div style=\"width: 500px;\n" +
+                                        "                font-size: 20px;\n" +
+                                        "                margin-top: 80px;\" align=\"right\">\n" +
+                                        "                <div id=\"code\"></div>\n" +
+                                        "            </div>\n" +
+                                        "        </div>\n" +
+                                        "<table class=\"table\" align=\"center\">\n" +
+                                        "            <thead>\n" +
+                                        "                <tr>\n" +
+                                        "                    <th id=\"question\"></th>\n" +
+                                        "                </tr>\n" +
+                                        "            </thead>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td>\n" +
+                                        "                        <input type=\"text\" id=\"questionId\" name='questionId'>\n" +
+                                        "                    </td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"0\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"1\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"2\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"3\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"4\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr>\n" +
+                                        "                    <td id=\"5\"></td>\n" +
+                                        "                </tr>\n" +
+                                        "                <tr align=\"right\">\n" +
+                                        "                    <td class='noHover'> " +
+                                        "<button class=\"btn btn-primary\" type=\"button\"  onclick='nextQuestion(this)'>下一题</button></td>\n" +
+                                        "                </tr>\n" +
+                                        "        </table>");
+
+
+                                $("#form" + i).find("#question").text((i + 1) + " . " + v.question);
+                                $("#form" + i).find("#questionId").val(v.question_id);
+
+                                $.each(v.answers, function (index, value) {
+                                    $("#form" + i).find("#" + index).html(value);
+                                    $("#form" + i).find("#" + index).show();
+                                });
+                                $("#form" + i).find("button").val(i);
+                                $("#form" + i).find("button").attr("disabled", true);
+
+
+                            });
+
+                            if (data.num > 0) {
+                                sessionStorage.setItem("qId",$("#form" + data.num).find("#questionId").val());
+                                $("#start").hide();
+                                $("#form" + data.num).show();
+                                time(data.num, 30);
+                            } else {
+                                $("#start").show();
+                            }
+
+                            buttonDisplay();
+
+
+                        }
+                    });
+
+
+                });
+
+                function refresh() {
+                    var id =  sessionStorage.getItem("qId");
+                    $.ajax({
+                        url:"/addRefreshResult?id=" + id,
+                        type:"post"
+                    })
+                }
+
+
+                function start() {
+                    $("#start").hide();
+                    $("#form0").show();
+                    sessionStorage.setItem("qId",$("#form0").find("#questionId").val());
+                    time(0, 30);
+                }
+
+
+                function time(i, s) {
+                    var dis = $("#form" + i).css("display");
+                    if (dis != "none") {
+                        if (s == 0) {
+                            $("#form" + i).find("button").click();
+                        } else {
+                            $("#form" + i).find("#code").html("倒计时：" + s + "s");
+                            setTimeout(function () {
+                                time(i, s - 1)
+                            }, 1000)
+                        }
+                    }
+                }
+
+
+                function buttonDisplay() {
+
+                    //控制按钮选中
+                    $("input[type=checkbox]").click(function () {
+                        if ($(this).prop("checked")) {
+                            $(this).prop("checked", false);
+                            $(this).parents("td").removeClass("selected");
+                        } else {
+                            $(this).prop("checked", true);
+                            $(this).parents("td").addClass("selected");
+                        }
+                    });
+
+                    //控制选项选中
+                    $("td").click(function () {
+                        var t = $(this).find("input").prop("type");
+                        if (t == "checkbox") {
+                            if ($(this).find("input").prop("checked")) {
+                                $(this).find("input").prop("checked", false);
+                                $(this).removeClass("selected");
+                            } else {
+                                $(this).find("input").prop("checked", true);
+                                $(this).addClass("selected");
+                            }
+                        } else {
+                            var name = $(this).find("input").prop("name");
+                            $("input[name=" + name + "]").parents("td").removeClass("selected");
+                            $(this).find("input").prop("checked", true);
+                            $(this).addClass("selected");
+                        }
+                    });
+
+                    //控制提交按钮显示
+                    $("td").bind("click", function () {
+                        var id = $(this).parents("form").attr("id");
+                        var array = [];
+                        var t = $("#" + id).find("input[name=answers]").prop("type");
+                        if (t == "checkbox") {
+                            $("#" + id).find("input[name=answers]:checkbox:checked").each(function () {
+                                array.push($(this).val())
+                            });
+                        } else {
+                            array.push($("#" + id).find("input[name=answers]:radio:checked").val());
+                        }
+
+                        if (array.length > 0) {
+                            $("#" + id).find("button").attr("disabled", false);
+                        } else {
+                            $("#" + id).find("button").attr("disabled", true);
+                        }
+                        array = [];
+                    });
+
+                }
+
+                function nextQuestion(obj) {
+                    var i = obj.value;
+
+                    var id = $("#form" + i).find("#questionId").value;
+                    var types = $("#form" + i).find("#1").find("input").prop("type");
+                    var array = [];
+
+                    if (types == "checkbox") {
+                        //当chekeBox被选中时，在arry中加入新选中的元素
+                        //:checkbox ：选取所有type为checkbox的元素
+                        $("#form" + i).find(":checkbox:checked").each(function () {
+                            //在array的后面加上新的元素
+                            array.push($(this).val())
+                        });
+                    } else {
+                        array.push($("#form" + i).find('input:radio:checked').val());
+                    }
+
+                    $.ajax({
+                        url: "@routes.QuestionController.addResult()",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            questionId: $("#form" + i).find("#questionId").val(),
+                            answers: array
+                        },
+                        success: function () {
+                            $("#form" + i).hide();
+                            $("#form" + (Number(i) + 1)).show();
+                            time(Number(i) + 1, 30);
+                            sessionStorage.setItem("qId",$("#form" + (Number(i) + 1)).find("#questionId").val());
+
+
+                            if (i == "48") {
+                                $("#form" + (Number(i) + 1)).find("button").text("提交");
+                                $("#form" + (Number(i) + 1)).find("button").attr("onclick", "getResult()")
+                            }
+                        }
+                    });
+                }
+
+                function getResult() {
+                    window.location.replace("@routes.QuestionController.resultBefore()")
+                }
+        </script>
+
+    }

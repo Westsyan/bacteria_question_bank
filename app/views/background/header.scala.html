@@ -1,0 +1,76 @@
+@(session: Session)
+<div class="page-header navbar navbar-fixed-top">
+        <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+        <div class="page-logo" style="text-align: center;
+            line-height: 50px;">
+            <i class="logo">致病菌题库后台统计</i>
+        </div>
+
+        <a href="#" class="page-option" style="display: none">
+            <div class="page-menu-left" >
+                <div style="margin-top: 5px">
+                    <i class="fa fa-eye logo-left" style="font-size: 20px"></i>
+                </div>
+                <span class="page-header-text"> 实时概况</span>
+            </div>
+        </a>
+        @if(!session.get("admin").isEmpty) {
+            <a href="#" class="page-option">
+                <div class="page-menu-left action" >
+                    <div style="margin-top: 5px">
+                        <i class="fa fa-bar-chart logo-left" style="font-size: 20px"></i>
+                    </div>
+                    <span class="page-header-text"> 数据报表</span>
+                </div>
+            </a>
+        }
+        <a href="#" class="page-option" style="display: none">
+            <div class="page-menu-left " >
+                <div style="margin-top: 5px">
+                    <i class="fa fa-image logo-left" style="font-size: 20px"></i>
+                </div>
+                <span class="page-header-text"> 数据对比</span>
+            </div>
+        </a>
+        <a href="#" class="page-option" style="display: none">
+            <div class="page-menu-left" >
+                <div style="margin-top: 5px">
+                    <i class="fa fa-line-chart logo-left" style="font-size: 20px"></i>
+                </div>
+                <span class="page-header-text"> 数据管理</span>
+            </div>
+        </a>
+        <a href="#" class="page-option" style="display: none">
+            <div class="page-menu-left" >
+                <div style="margin-top: 5px">
+                    <i class="fa fa-cog logo-left" style="font-size: 20px"></i>
+                </div>
+                <span class="page-header-text"> 系统设置</span>
+            </div>
+        </a>
+
+
+        <a href="@routes.QuestionController.userBefore()" class="page-option">
+            <div class="page-menu-right" >
+                <div style="margin-top: 5px">
+                    <i class="fa fa-sign-out logo-right" style="font-size: 20px"></i>
+                </div>
+                <span class="page-header-text"> 退出系统</span>
+            </div>
+        </a>
+
+
+        @if(!session.get("admin").isEmpty) {
+            <a href="@routes.AdminController.changePasswordBefore()" class="page-option">
+                <div class="page-menu-right">
+                    <div style="margin-top: 5px">
+                        <i class="fa fa-lock logo-right" style="font-size: 20px"></i>
+                    </div>
+                    <span class="page-header-text"> 修改密码</span>
+                </div>
+            </a>
+        }
+    </div>
+</div>

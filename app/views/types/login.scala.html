@@ -1,0 +1,40 @@
+@()(implicit flash:Flash, session: Session)
+@background.main("登录"){
+
+
+    <div class="col-sm-12">
+      <section class="main-col" style="margin: 150px">
+        <div class="register">
+          <h2 class="page-heading" style="font-size: 25px;">登录账户</h2>
+          <form id="loginForm" style="max-width: 320px;" class="registration-form" accept-charset="UTF-8" action="/login/login">
+
+            <span class="error" style="line-height: 35px;">@flash.get("info")
+            </span>
+
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><em
+                class="fa fa-user icon2x"></em></span>
+                <input id="loginEmail" name="account" placeholder="账号" autofocus="autofocus" type="text" class="form-control" required value=""/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><em
+                class="fa fa-key icon2x"></em></span>
+                <input id="loginPassword" name="password" placeholder="密码" type="password" autofocus="autofocus" class="form-control" required value="" maxlength="30"/>
+              </div>
+            </div>
+
+            <div class="actions">
+              <input type="submit" id="loginSubmit" value="登	录"
+              class="btn btn-primary btn-lg" style="background-color: #FF7E23;">
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+
+}

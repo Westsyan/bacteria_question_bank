@@ -1,0 +1,259 @@
+@(id:Int)(implicit session: Session)
+@background.main("统计") {
+
+    <style>
+
+            .portlet.box.blue-soft {
+                border: 1px solid #FF7E23;
+            }
+
+            .portlet.box.blue-soft > .portlet-title {
+                background-color: #FF7E23;
+            }
+
+    </style>
+
+    <div class="row-fluid">
+
+        <div class="row">
+
+
+            <div class="col-md-12 col-sm-12">
+
+                <form id="form">
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>是否涉及实验室具体操作</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="isoperation">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" align="right">
+                            <label>是否涉及实验室管理</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="ismanager">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>涉及实验室的生物安全等级</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="lab[]" multiple>
+                                <option value="A">生物安全一级实验室</option>
+                                <option value="B">生物安全二级实验室</option>
+                                <option value="C">生物安全三级实验室</option>
+                                <option value="D">生物安全四级实验室</option>
+                                <option value="E">不清楚</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>从事目前职业的年数</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="workyear">
+                                <option value="A">小于1年</option>
+                                <option value="B">1-5年</option>
+                                <option value="C">5-10年</option>
+                                <option value="D">10年以上</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" align="right">
+                            <label>是否进行过实验室生物安全培训</label>
+                        </div>
+                        <div class="col-sm-2" bn>
+                            <select class="form-control" name="istrain">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>最近一次进行实验室生物安全培训的时间</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="traintime">
+                                <option value="A">1年内</option>
+                                <option value="B">1-5年内</option>
+                                <option value="C">超过5年</option>
+                            </select>
+                        </div>
+
+
+                        <div class = "actions indent col-sm-3  col-sm-offset-1">
+                            <button type="button" class="btn btn-primary" style="width: 100%;
+                                background-color: #FF7E23;" id="search" onclick="filter()">
+                                筛选</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+
+            <div class="col-md-12 col-sm-12" style="margin-top: 20px">
+                <div class="portlet blue-soft box">
+
+                    <div class="portlet-title">
+                        <div class="caption">
+                            按专业背景进行统计
+                        </div>
+                    </div>
+
+                    <div class="portlet-body" style="height: 500px;">
+
+
+                        <div style="float: left;width: 26%;font-size: 17px;margin-left: 2%" id="quesInfo">
+
+
+                        </div>
+
+                        <div style="width: 26%;float: left;margin-left: 2%">
+                            <table class="table" id="table">
+                                <thead>
+                                    <tr>
+                                        <th data-field="career">背景</th>
+                                        <th data-field="allPeople">答题人数</th>
+                                        <th data-field="correctPeople">答对人数</th>
+                                        <th data-field="correctPercent">正确率</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+
+                        <div style="width: 42%;
+                            float: left;margin-left: 2%">
+                            <div id="stat">
+
+                            </div>
+
+                            <div id="container" style="min-width: 400px;
+                                min-height: 400px"></div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            $(function () {
+
+                $(".form-control").val("").select2();
+
+                $(".form-control").select2({
+                    placeholder: "",
+                    minimumResultsForSearch: Infinity,
+                    allowClear: true
+                });
+
+                $.ajax({
+                    url:"/background/getQuestionById?id=@id",
+                    type:"post",
+                    success:function(data){
+                        $("#quesInfo").html(data)
+                    }
+                });
+
+
+                $.ajax({
+                    url:"/background/getChartsById?id=@id",
+                    type:"post",
+                    dataType:"json",
+                    data : $("#form").serialize(),
+                    success:function (data) {
+                        $("#table").bootstrapTable({data:data.tableData});
+                        column(data.perCor,data.perFal);
+                        $("#stat").html(data.stat);
+                        layer.close(index);
+
+                    }
+                });
+
+            });
+
+
+            function filter() {
+                var index = layer.load(1);
+                $.ajax({
+                    url:"/background/getChartsById?id=@id",
+                    type:"post",
+                    dataType:"json",
+                    data : $("#form").serialize(),
+                    success:function (data) {
+                        $("#table").bootstrapTable('load',data.tableData);
+                        column(data.perCor,data.perFal);
+                        $("#stat").html(data.stat);
+                        layer.close(index);
+                    }
+                });
+            }
+
+            function column(a1, a2) {
+                var chart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '结果统计'
+                    },
+                    xAxis: {
+                        categories: ['临床医学', '基础医学相关专业', '生物学相关专业',"生物安全相关", "其他"],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 100,
+                        title: {
+                            text: '正确率'
+                        }
+                    },
+                    tooltip: {
+                        // head + 每个 point + footer 拼接成完整的 table
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: {
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: '正确率',
+                        data: a1
+                    }, {
+                        name: '错误率',
+                        data: a2
+                    }]
+                });
+            }
+
+
+    </script>
+
+}

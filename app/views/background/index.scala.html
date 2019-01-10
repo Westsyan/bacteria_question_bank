@@ -1,0 +1,222 @@
+@()(implicit session: Session)
+@background.main("后台统计") {
+
+    <style>
+
+            .portlet.box.blue-soft {
+                border: 1px solid #FF7E23;
+            }
+
+            .portlet.box.blue-soft > .portlet-title {
+                background-color: #FF7E23;
+            }
+
+    </style>
+
+    <div class="row-fluid">
+
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12">
+
+                <form id="form">
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>所事专业</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="career" name="career[]" multiple>
+                                <option value="A">临床医学</option>
+                                <option value="B">基础医学相关专业</option>
+                                <option value="C">生物学相关专业</option>
+                                <option value="D">生物安全相关</option>
+                                <option value="E">其他</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>是否涉及实验室具体操作</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="isoperation">
+                                <option>是</option>
+                                <option>否</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" align="right">
+                            <label>是否涉及实验室管理</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="ismanager">
+                                <option>是</option>
+                                <option>否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>涉及实验室的生物安全等级</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="lab[]" multiple>
+                                <option>生物安全一级实验室</option>
+                                <option>生物安全二级实验室</option>
+                                <option>生物安全三级实验室</option>
+                                <option>生物安全四级实验室</option>
+                                <option>不清楚</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>从事目前职业的年数</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="workyear">
+                                <option>小于1年</option>
+                                <option>1-5年</option>
+                                <option>5-10年</option>
+                                <option>10年以上</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" align="right">
+                            <label>是否进行过实验室生物安全培训</label>
+                        </div>
+                        <div class="col-sm-2" bn>
+                            <select class="form-control" name="istrain">
+                                <option>是</option>
+                                <option>否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
+                            <label>最近一次进行实验室生物安全培训的时间</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="traintime">
+                                <option>1年内</option>
+                                <option>1-5年内</option>
+                                <option>超过5年</option>
+                            </select>
+                        </div>
+
+
+                        <div class = "actions indent col-sm-3  col-sm-offset-1">
+                            <button type="button" class="btn btn-primary" style="width: 100%;
+                                background-color: #FF7E23;" id="search" onclick="filter()">
+                                筛选</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+
+            <div class="col-md-12 col-sm-12">
+                <div class="portlet blue-soft box">
+
+                    <div class="portlet-title">
+                        <div class="caption">
+                            按专业背景进行统计
+                        </div>
+                    </div>
+
+                    <div class="portlet-body" style="height: 500px;">
+                        <label>符合条件人数 ： </label><span id="person"> </span>
+
+                        <div id="container" style="min-width: 400px;
+                            min-height: 400px"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            $(function () {
+
+                $(".form-control").val("").select2();
+
+                $(".form-control").select2({
+                    placeholder: "",
+                    minimumResultsForSearch: Infinity,
+                    allowClear: true
+                });
+
+                filter();
+
+            });
+
+
+            function filter() {
+                var index = layer.load(1);
+                $.ajax({
+                    url: "@routes.BackgroundController.getFilterResult()",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#form").serialize(),
+                    success : function (data) {
+                        $("#person").text(data.person + "人");
+                        column(data.base, data.speziell);
+                        layer.close(index);
+                    }
+
+                })
+            }
+
+            function column(a1, a2) {
+                var chart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '结果统计'
+                    },
+                    xAxis: {
+                        categories: ['生物安全相关法律法规', '生物危害因子的风险评估', '生物安全实验室的分级及管理', "生物安全实验室设施",
+                            "生物安全实验室关键设备", "消毒灭菌及废物处理", "突发事故的处理和应急预案", "实验室个人防护", "菌毒种运输及管理", "实验操作"],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 100,
+                        title: {
+                            text: '正确率'
+                        }
+                    },
+                    tooltip: {
+                        // head + 每个 point + footer 拼接成完整的 table
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: {
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: '基础知识题',
+                        data: a1
+                    }, {
+                        name: '专业知识题',
+                        data: a2
+                    }]
+                });
+            }
+    </script>
+
+}

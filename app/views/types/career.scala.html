@@ -1,0 +1,145 @@
+@()(implicit session: Session)
+@background.main(""){
+
+    <style>
+            .defined-div-contain{
+                margin: 20px;
+            }
+
+        .defined-div-border{
+
+            height: 120px;
+            border-radius: 10px;
+        }
+    </style>
+
+
+    <div class="row-fluid">
+
+        <div class="row">
+
+    <div class="defined-div-contain">
+
+
+    <h3 class="page-title">
+        后台统计 <small>dashboard & statistics</small>
+    </h3>
+
+    <div class="row" style="margin-top:80px">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat defined-div-border blue-madison">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        12
+                    </div>
+                    <div class="desc">
+                        今日答题人数
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" >
+            <div class="dashboard-stat red-intense defined-div-border">
+                <div class="visual">
+                    <i class="fa fa-bar-chart-o"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        120
+                    </div>
+                    <div class="desc">
+                        总人数
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat green-haze defined-div-border">
+                <div class="visual">
+                    <i class="fa fa-shopping-cart"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        502
+                    </div>
+                    <div class="desc">
+                        题目数
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat purple-plum defined-div-border">
+                <div class="visual">
+                    <i class="fa fa-shopping-cart"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        40
+                    </div>
+                    <div class="desc">
+                        正确率80%以上人数
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+    <div class="col-md-12 col-sm-12" style="margin-top: 20px">
+        <div class="portlet blue-soft box">
+
+            <div class="portlet-title">
+                <div class="caption">
+                    按专业背景进行统计
+                </div>
+            </div>
+
+            <div class="portlet-body" style="height: 500px;">
+
+
+                <div style="float: left;width: 26%;font-size: 17px;margin-left: 2%" id="quesInfo">
+
+
+                </div>
+
+                <div style="width: 26%;float: left;margin-left: 2%">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th data-field="career">背景</th>
+                                <th data-field="allPeople">答题人数</th>
+                                <th data-field="correctPeople">答对人数</th>
+                                <th data-field="correctPercent">正确率</th>
+                            </tr>
+                        </thead>
+
+                    </table>
+                </div>
+
+                <div style="width: 42%;
+                    float: left;margin-left: 2%">
+                    <div id="stat">
+
+                    </div>
+
+                    <div id="container" style="min-width: 400px;
+                        min-height: 400px"></div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+    </div>
+
+
+}
