@@ -14,7 +14,6 @@ unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/
 
 libraryDependencies += "commons-io" % "commons-io" % "2.5"
 
-
 libraryDependencies += "com.typesafe.slick" % "slick-codegen_2.11" % "3.2.0"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.43"

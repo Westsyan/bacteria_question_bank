@@ -14,7 +14,11 @@ import scala.concurrent.duration.Duration
 class AdminController @Inject()(admindao:adminDao) extends Controller{
 
 
-  def loginBefore = Action { implicit request=>
+  def loginBefore = Action{implicit request=>
+    Ok(views.html.question.login()).withNewSession
+  }
+
+  def loginBackground = Action { implicit request=>
     Ok(views.html.types.login()).withNewSession
   }
 

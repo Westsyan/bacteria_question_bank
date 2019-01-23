@@ -5,11 +5,11 @@
   <style>
 
           .portlet.box.blue-soft {
-            border: 1px solid #FF7E23;
+            border: 1px solid #3D7DBA;
           }
 
           .portlet.box.blue-soft > .portlet-title {
-            background-color: #FF7E23;
+            background-color: #3D7DBA;
           }
 
   </style>
@@ -56,12 +56,16 @@
 
             <div id="toolbar"></div>
             <table class="table table-bordered table-hover " id="table" data-pagination="true" data-search="true"
-            data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true">
+            data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true"
+            data-show-export="true" data-export-types="['excel']" data-export-data-type="all"
+            data-export-options='{"fileName":"题库统计"}'
+            >
               <thead>
                 <tr>
                   <th data-field="question">题目</th>
                   <th data-field="percent">正确率</th>
                   <th data-field="correct">答对人数</th>
+                  <th data-field="time">平均答题时间</th>
                   <th data-field="all">总人数</th>
                 </tr>
               </thead>

@@ -16,8 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao, resultdao: resultDao) extends Controller {
 
 
-
-  def index = Action{implicit request=>
+  def index = Action { implicit request =>
     Ok(views.html.types.career())
   }
 
@@ -33,15 +32,21 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
 
   def getRow(x: Seq[QuestionRow]): Seq[JsObject] = {
     x.map { y =>
-      val q = "<a href='/background/questionInfoBefore?id="+y.id+"'>" + y.question + "</a>"
+      val q = "<a href='/background/questionInfoBefore?id=" + y.id + "'>" + y.question + "</a>"
       val id = y.id
-      val corrects = Await.result(resultdao.getCorrectByQid(id), Duration.Inf).length
+      val corrects = Await.result(resultdao.getCorrectByQid(id), Duration.Inf)
+      val corMan = corrects.length
       val alls = Await.result(resultdao.getByQid(id), Duration.Inf).length
       val per = alls match {
-        case 0 => "0.00%"
-        case _ => corrects / alls * 100 + "%"
+        case 0 => 0
+        case _ => "%.2f".format(corMan.toDouble / alls.toDouble * 100).toDouble
       }
-      Json.obj("question" -> q, "correct" -> corrects, "all" -> alls, "percent" -> per)
+      val time = corMan match {
+        case 0 => 0
+        case _ => corrects.map(_.times).sum / corMan
+      }
+
+      Json.obj("question" -> q, "correct" -> corMan, "all" -> alls, "percent" -> (per + "%"), "time" -> (time + "s"))
     }
   }
 
@@ -113,12 +118,13 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
   }
 
 
-  case class userFilterData(career: Option[Seq[String]], isoperation: Option[String], ismanager: Option[String],
+  case class userFilterData(career: Option[Seq[String]],issafe:Option[String], isoperation: Option[String], ismanager: Option[String],
                             lab: Option[Seq[String]], workyear: Option[String], istrain: Option[String], traintime: Option[String])
 
   val userFilterForm = Form(
     mapping(
       "career" -> optional(seq(text)),
+      "issafe" -> optional(text),
       "isoperation" -> optional(text),
       "ismanager" -> optional(text),
       "lab" -> optional(seq(text)),
@@ -131,6 +137,7 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
   def getFilterResult = Action { implicit request =>
     val data = userFilterForm.bindFromRequest.get
     val career = data.career
+    val issafe = data.issafe
     val isoperation = data.isoperation
     val ismanager = data.ismanager
     val lab = data.lab
@@ -138,10 +145,29 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
     val istrain = data.istrain
     val traintime = data.traintime
 
-    val id = Await.result(userdao.getUserByPosition(career, isoperation, ismanager, lab, workyear, istrain, traintime), Duration.Inf)
+    val id = Await.result(userdao.getUserByPosition(career,issafe, isoperation, ismanager, lab, workyear, istrain, traintime), Duration.Inf)
     val x = Await.result(resultdao.getByUserIds(id), Duration.Inf)
     val result = getCharts(x)
-    Ok(Json.obj("base" -> result._1, "speziell" -> result._2, "person" -> result._3))
+    val datas = result._1.zip(result._2).map(x => Array(x._1 + "%", x._2 + "%"))
+    val q0 = Array("基础知识题", "专业知识题", "","","符合条件人数", "所事专业", "是否涉及实验室具体操作", "是否涉及实验室管理", "涉及实验室的生物安全等级"
+      , "从事目前职业的年数", "是否进行过实验室生物安全培训", "最近一次进行实验室生物安全培训的时间")
+    val q1 = datas.head ++ Array("","",result._3.toString,career.getOrElse(Seq("")).map(x=>getCareer(x)).mkString(","),
+      getIsOrNo(isoperation.getOrElse("")), getIsOrNo(ismanager.getOrElse("")),
+      lab.getOrElse(Seq("")).map(x=>getLab(x)).mkString(","), getWorkyear(workyear.getOrElse("")),
+      getIsOrNo(istrain.getOrElse("")), getTraintime(traintime.getOrElse("")))
+    val json = q0.zipWithIndex.map { x =>
+      if (x._2 < 2) {
+        Json.obj("q0" -> x._1, "q1" -> q1(x._2), "q2" -> datas(1)(x._2), "q3" -> datas(2)(x._2), "q4" -> datas(3)(x._2),
+          "q5" -> datas(4)(x._2), "q6" -> datas(5)(x._2), "q7" -> datas(6)(x._2), "q8" -> datas(7)(x._2),
+          "q9" -> datas(8)(x._2), "q10" -> datas(9)(x._2))
+      } else {
+        Json.obj("q0" -> x._1, "q1" -> q1(x._2),"q2" -> "", "q3" -> "", "q4" -> "", "q5" -> "", "q6" -> "", "q7" -> "", "q8" -> "",
+          "q9" -> "", "q10" ->"")
+      }
+
+    }
+
+    Ok(Json.obj("base" -> result._1, "speziell" -> result._2, "person" -> result._3, "data" -> json))
 
   }
 
@@ -191,11 +217,11 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
 
     val data = userFilterForm.bindFromRequest.get
 
-    val ids = Await.result(userdao.getUserByPosition(data.career, data.isoperation, data.ismanager, data.lab,
+    val ids = Await.result(userdao.getUserByPosition(data.career,data.issafe, data.isoperation, data.ismanager, data.lab,
       data.workyear, data.istrain, data.traintime), Duration.Inf)
 
     val result = Await.result(resultdao.getByQid(id), Duration.Inf)
-    val array = result.filter(x=>ids.contains(x.userId)).flatMap { x =>
+    val array = result.filter(x => ids.contains(x.userId)).flatMap { x =>
       val user = Await.result(userdao.getByUserId(x.userId), Duration.Inf)
       user.career.split(",").map { y =>
         (y, x.isRight)
@@ -204,7 +230,7 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
 
     val allper = array.length match {
       case 0 => "0.00%"
-      case _ =>"%.2f".format(array.count(_._2 ==1).toDouble/array.length.toDouble *100) + "%"
+      case _ => "%.2f".format(array.count(_._2 == 1).toDouble / array.length.toDouble * 100) + "%"
     }
 
 
@@ -216,7 +242,7 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
        """.stripMargin
 
 
-    val row = Seq("A", "B", "C", "D", "E").map { x =>
+    val row = Seq("A", "B", "C", "D").map { x =>
       val classes = array.filter(_._1 == x)
       val all = classes.length
       val right = classes.count(_._2 == 1)
@@ -231,7 +257,7 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
       (Json.obj("career" -> getCareer(x), "allPeople" -> all, "correctPeople" -> right, "correctPercent" -> (perCor + "%")), Seq(perCor, perFal))
     }
     val charts = row.map(_._2).transpose
-    Ok(Json.obj("tableData" -> row.map(_._1), "perCor" -> charts.head, "perFal" -> charts.last,"stat"->stat))
+    Ok(Json.obj("tableData" -> row.map(_._1), "perCor" -> charts.head, "perFal" -> charts.last, "stat" -> stat))
   }
 
   def getCareer(option: String): String = {
@@ -239,8 +265,46 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
       case "A" => "临床医学"
       case "B" => "基础医学相关专业"
       case "C" => "生物学相关专业"
-      case "D" => "生物安全相关"
-      case "E" => "其他"
+      case "D" => "其他"
+      case _ => ""
+    }
+  }
+
+  def getLab(option: String) : String = {
+    option match {
+      case "A" => "生物安全一级实验室"
+      case "B" => "生物安全二级实验室"
+      case "C" => "生物安全三级实验室"
+      case "D" => "生物安全四级实验室"
+      case "E" => "不清楚"
+      case _ => ""
+    }
+  }
+
+  def getWorkyear(option:String) : String = {
+    option match {
+      case "A" => "小于1年"
+      case "B" => "1-5年"
+      case "C" => "5-10年"
+      case "D" => "10年以上"
+      case _ => ""
+    }
+  }
+
+  def getTraintime(option:String) : String ={
+    option match {
+      case "A" => "1年内"
+      case "B" => "1-5年内"
+      case "C" => "超过5年"
+      case _ => ""
+    }
+  }
+
+  def getIsOrNo(option: String) : String ={
+    option match {
+      case "A" => "是"
+      case "B" => "否"
+      case _ => ""
     }
   }
 

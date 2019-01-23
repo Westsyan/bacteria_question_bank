@@ -13,6 +13,7 @@ import utils.Utils
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
+import scala.util.Random
 
 class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, resultdao: resultDao) extends Controller {
 
@@ -21,13 +22,14 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
     Ok(views.html.question.userPage()).withNewSession
   }
 
-  case class userData(career: Seq[String], isoperation: String, ismanager: String, lab: Option[Seq[String]],
+  case class userData(career: Seq[String],issafe:String, isoperation: Option[String], ismanager: String, lab: Option[Seq[String]],
                       workyear: String, istrain: String, traintime: Option[String])
 
   val userForm = Form(
     mapping(
       "career" -> seq(text),
-      "isoperation" -> text,
+      "issafe" -> text,
+      "isoperation" -> optional(text),
       "ismanager" -> text,
       "lab" -> optional(seq(text)),
       "workyear" -> text,
@@ -45,13 +47,14 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
     try {
       val data = userForm.bindFromRequest.get
       val career = data.career.mkString(",")
-      val isoperation = data.isoperation
+      val issafe = data.issafe
+      val isoperation = data.isoperation.getOrElse("")
       val ismanager = data.ismanager
       val lab = data.lab.getOrElse(Seq("")).mkString(",")
       val workyear = data.workyear
       val istrain = data.workyear
       val traintime = data.traintime.getOrElse("")
-      id = Await.result(userdao.addUser(UserRow(0, Utils.date2, career, isoperation, ismanager, lab, workyear, istrain, traintime)), Duration.Inf)
+      id = Await.result(userdao.addUser(UserRow(0, Utils.date2, career,isoperation, ismanager, lab, workyear, istrain, traintime,issafe)), Duration.Inf)
     } catch {
       case e: Exception => valid = "false"
         message = e.getMessage
@@ -61,12 +64,7 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
   }
 
   def answerPage = Action { implicit request =>
-    val userId = request.session.get("userId")
-    if(userId.isEmpty){
-      Redirect(routes.QuestionController.userBefore())
-    }else{
       Ok(views.html.question.answerPage())
-    }
   }
 
   def answerBefore(id: Int) = Action.async { implicit request =>
@@ -81,7 +79,7 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
 
   def addRefreshResult(id: String) = Action.async { implicit request =>
     val userId = request.session.get("userId").get.toInt
-    resultdao.addResult(ResultRow(0, id.toInt, userId, 2, "")).map { x =>
+    resultdao.addResult(ResultRow(0, id.toInt, userId, 2, "",0)).map { x =>
       Ok(Json.toJson("success"))
     }
   }
@@ -90,43 +88,51 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
     val userId = request.session.get("userId").get.toInt
     val results = Await.result(resultdao.getByUserId(userId), Duration.Inf)
     val resQuestion = Await.result(questiondao.getQuestionByIds(results.map(_.questionId)), Duration.Inf)
-
     questiondao.getAllQuestion.map { x =>
       val question = (1 to 10).flatMap { i =>
         val existR = resQuestion.filter(_.`class` == i.toString)
         val classes = x.filter(_.`class` == i.toString)
-        val common = classes.filter(_.classMin == "1")
-        val major = classes.filter(_.classMin == "2")
+        val common = classes.filter(_.classMin == "1").filter(y=> !existR.contains(y))
+        val major = classes.filter(_.classMin == "2").filter(y=> !existR.contains(y))
         //选择3个普通题和2个专业题
-        Utils.random(2 - existR.count(_.classMin == "1"), common.length).map(y => common(y)) ++
-          Utils.random(1 - existR.count(_.classMin == "2"), major.length).map(y => major(y))
+        Random.shuffle(common).take(3 - existR.count(_.classMin == "1")) ++
+        Random.shuffle(major).take(2 - existR.count(_.classMin == "2"))
       }
+
 
       val row = Utils.shuffle(question.toArray).map { y =>
 
-        val (types, suffix) = if (y.answer.length > 1) {
+/*        val (types, suffix) = if (y.answer.length > 1) {
           ("checkbox", "（多选题）")
         } else {
           ("radio", "（单选题）")
-        }
+        }*/
+        val types = "checkbox"
         val answer = Array(y.a, y.b, y.c, y.d, y.e, y.f).filter(_ != "")
         val str = Array("A", "B", "C", "D", "E", "F")
         val option = answer.zip(str.take(answer.length)).map { x =>
           s"<input type='$types' value='${x._2}' name='answers'>    ${x._1}"
+        }.toSeq
+        val answers = if(option.count(_.contains("以上均可")) > 0){
+          Random.shuffle(option.init).toArray ++ Array(option.last)
+        }else{
+          Random.shuffle(option).toArray
         }
-        Json.obj("question" -> (y.question + suffix),
-          "answers" -> Utils.shuffle(option), "question_id" -> y.id)
+
+        Json.obj("question" -> y.question,
+          "answers" ->answers, "question_id" -> y.id,"times" -> y.time)
       }
       Ok(Json.obj("row" -> row, "num" -> results.length))
     }
   }
 
-  case class resultData(questionId: String, answers: Seq[String])
+  case class resultData(questionId: String, answers: Seq[String],times:Int)
 
   def resultForm = Form(
     mapping(
       "questionId" -> text,
-      "answers" -> seq(text)
+      "answers" -> seq(text),
+      "times" -> number
     )(resultData.apply)(resultData.unapply)
   )
 
@@ -148,7 +154,7 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
       } else {
         2
       }
-      Await.result(resultdao.addResult(ResultRow(0, qId, userId, isRight, answer)), Duration.Inf)
+      Await.result(resultdao.addResult(ResultRow(0, qId, userId, isRight, answer,question.time  - data.times)), Duration.Inf)
     } catch {
       case e: Exception => valid = "false"
         message = e.getMessage

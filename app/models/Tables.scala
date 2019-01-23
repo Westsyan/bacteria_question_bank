@@ -9,9 +9,6 @@ object Tables extends {
 trait Tables {
   val profile: slick.jdbc.JdbcProfile
   import profile.api._
-  import com.github.tototoshi.slick.MySQLJodaSupport._
-  import org.joda.time.DateTime
-  import slick.model.ForeignKeyAction
   // NOTE: GetResult mappers for plain SQL are only generated for tables where Slick knows how to map the types of all columns.
   import slick.jdbc.{GetResult => GR}
 
@@ -109,18 +106,19 @@ trait Tables {
    *  @param questionId Database column question_id SqlType(INT)
    *  @param userId Database column user_id SqlType(INT)
    *  @param isRight Database column is_right SqlType(INT)
-   *  @param answer Database column answer SqlType(VARCHAR), Length(255,true) */
-  final case class ResultRow(id: Int, questionId: Int, userId: Int, isRight: Int, answer: String)
+   *  @param answer Database column answer SqlType(VARCHAR), Length(255,true)
+   *  @param times Database column times SqlType(INT) */
+  final case class ResultRow(id: Int, questionId: Int, userId: Int, isRight: Int, answer: String, times: Int)
   /** GetResult implicit for fetching ResultRow objects using plain SQL queries */
   implicit def GetResultResultRow(implicit e0: GR[Int], e1: GR[String]): GR[ResultRow] = GR{
     prs => import prs._
-    ResultRow.tupled((<<[Int], <<[Int], <<[Int], <<[Int], <<[String]))
+    ResultRow.tupled((<<[Int], <<[Int], <<[Int], <<[Int], <<[String], <<[Int]))
   }
   /** Table description of table result. Objects of this class serve as prototypes for rows in queries. */
   class Result(_tableTag: Tag) extends profile.api.Table[ResultRow](_tableTag, Some("bacteria_question"), "result") {
-    def * = (id, questionId, userId, isRight, answer) <> (ResultRow.tupled, ResultRow.unapply)
+    def * = (id, questionId, userId, isRight, answer, times) <> (ResultRow.tupled, ResultRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(questionId), Rep.Some(userId), Rep.Some(isRight), Rep.Some(answer)).shaped.<>({r=>import r._; _1.map(_=> ResultRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(questionId), Rep.Some(userId), Rep.Some(isRight), Rep.Some(answer), Rep.Some(times)).shaped.<>({r=>import r._; _1.map(_=> ResultRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(INT), AutoInc */
     val id: Rep[Int] = column[Int]("id", O.AutoInc)
@@ -132,6 +130,8 @@ trait Tables {
     val isRight: Rep[Int] = column[Int]("is_right")
     /** Database column answer SqlType(VARCHAR), Length(255,true) */
     val answer: Rep[String] = column[String]("answer", O.Length(255,varying=true))
+    /** Database column times SqlType(INT) */
+    val times: Rep[Int] = column[Int]("times")
 
     /** Primary key of Result (database name result_PK) */
     val pk = primaryKey("result_PK", (id, questionId, userId))
@@ -143,23 +143,24 @@ trait Tables {
    *  @param id Database column id SqlType(INT), AutoInc, PrimaryKey
    *  @param date Database column date SqlType(VARCHAR), Length(255,true)
    *  @param career Database column career SqlType(TEXT)
-   *  @param q2 Database column q2 SqlType(TEXT)
-   *  @param q3 Database column q3 SqlType(TEXT)
-   *  @param q4 Database column q4 SqlType(TEXT)
-   *  @param q5 Database column q5 SqlType(TEXT)
-   *  @param q6 Database column q6 SqlType(TEXT)
-   *  @param q7 Database column q7 SqlType(TEXT) */
-  final case class UserRow(id: Int, date: String, career: String, q2: String, q3: String, q4: String, q5: String, q6: String, q7: String)
+   *  @param isoperation Database column isoperation SqlType(TEXT)
+   *  @param ismanager Database column ismanager SqlType(TEXT)
+   *  @param lab Database column lab SqlType(TEXT)
+   *  @param workyear Database column workyear SqlType(TEXT)
+   *  @param istrain Database column istrain SqlType(TEXT)
+   *  @param traintime Database column traintime SqlType(TEXT)
+   *  @param issafe Database column issafe SqlType(TEXT) */
+  final case class UserRow(id: Int, date: String, career: String, isoperation: String, ismanager: String, lab: String, workyear: String, istrain: String, traintime: String, issafe: String)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
   implicit def GetResultUserRow(implicit e0: GR[Int], e1: GR[String]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[Int], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String]))
+    UserRow.tupled((<<[Int], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String], <<[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends profile.api.Table[UserRow](_tableTag, Some("bacteria_question"), "user") {
-    def * = (id, date, career, q2, q3, q4, q5, q6, q7) <> (UserRow.tupled, UserRow.unapply)
+    def * = (id, date, career, isoperation, ismanager, lab, workyear, istrain, traintime, issafe) <> (UserRow.tupled, UserRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(date), Rep.Some(career), Rep.Some(q2), Rep.Some(q3), Rep.Some(q4), Rep.Some(q5), Rep.Some(q6), Rep.Some(q7)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(date), Rep.Some(career), Rep.Some(isoperation), Rep.Some(ismanager), Rep.Some(lab), Rep.Some(workyear), Rep.Some(istrain), Rep.Some(traintime), Rep.Some(issafe)).shaped.<>({r=>import r._; _1.map(_=> UserRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(INT), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -167,18 +168,20 @@ trait Tables {
     val date: Rep[String] = column[String]("date", O.Length(255,varying=true))
     /** Database column career SqlType(TEXT) */
     val career: Rep[String] = column[String]("career")
-    /** Database column q2 SqlType(TEXT) */
-    val q2: Rep[String] = column[String]("q2")
-    /** Database column q3 SqlType(TEXT) */
-    val q3: Rep[String] = column[String]("q3")
-    /** Database column q4 SqlType(TEXT) */
-    val q4: Rep[String] = column[String]("q4")
-    /** Database column q5 SqlType(TEXT) */
-    val q5: Rep[String] = column[String]("q5")
-    /** Database column q6 SqlType(TEXT) */
-    val q6: Rep[String] = column[String]("q6")
-    /** Database column q7 SqlType(TEXT) */
-    val q7: Rep[String] = column[String]("q7")
+    /** Database column isoperation SqlType(TEXT) */
+    val isoperation: Rep[String] = column[String]("isoperation")
+    /** Database column ismanager SqlType(TEXT) */
+    val ismanager: Rep[String] = column[String]("ismanager")
+    /** Database column lab SqlType(TEXT) */
+    val lab: Rep[String] = column[String]("lab")
+    /** Database column workyear SqlType(TEXT) */
+    val workyear: Rep[String] = column[String]("workyear")
+    /** Database column istrain SqlType(TEXT) */
+    val istrain: Rep[String] = column[String]("istrain")
+    /** Database column traintime SqlType(TEXT) */
+    val traintime: Rep[String] = column[String]("traintime")
+    /** Database column issafe SqlType(TEXT) */
+    val issafe: Rep[String] = column[String]("issafe")
   }
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new User(tag))

@@ -1,12 +1,12 @@
 @()(implicit session: Session)
-@home.main("致病菌测试") {
+@home.main("实验室生物安全知识评估") {
 
     <style>
 
             .table {
                 display: none;
                 margin-top: 80px;
-                width: 500px; ;
+                width: 600px; ;
             }
 
             th {
@@ -21,12 +21,12 @@
                 border: 0px solid transparent !important;
             }
 
-            td:hover{
+            td:hover {
                 background-color: #F9F9F9;
             }
 
-            .noHover{
-                display: table;
+            .noHover {
+             display: table;
             }
 
             .noHover:hover {
@@ -39,131 +39,164 @@
 
     </style>
 
+    <div class="panel panel-default" style="margin: 20px;height: 90px;box-shadow: 0 0 20px #ddd;text-align: center;
+        font-family: Helvetica Neue,Helvetica,Arial,sans-serif;">
 
-    <div id="contain" >
+        <h4 style="font-weight: 500;line-height: 70px">本测试不收集任何个人信息</h4>
 
-        <h4><a onclick="rebackHome()"><i class="fa fa-arrow-left"></i> 返回首页</a></h4>
+    </div>
+
+    <div class="panel panel-default" style="margin: 20px;box-shadow: 0 0 20px #ddd;">
+
+        <div class="panel-body" style="height: 630px">
+            <div id="contain" >
+
+                @* <h4><a onclick="rebackHome()"><i class="fa fa-arrow-left"></i> 返回首页</a></h4>*@
+
+                <form id="form">
+
+@*                    <h1 align="center" style="margin-top: 50px">在线测试</h1>
+                    <h5 align="center">本测试不收集任何个人信息</h5>*@
+
+                    <table class="table" align="center" id="1">
+                        <thead>
+                            <tr>
+                                <th>1. 您目前所从事的专业（可多选）：</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="checkbox" name="career" value="A"> 临床医学</td></tr>
+                        <tr><td><input type="checkbox" name="career" value="B"> 基础医学相关专业</td></tr>
+                        <tr><td><input type="checkbox" name="career" value="C"> 生物学相关专业</td></tr>
+                        <tr><td><input type="checkbox" name="career" value="D"> 其他</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="1">
+                                    下一题  <i class="fa fa-arrow-right"></i></button>
+                            </td>
+                        </tr>
+                    </table>
 
 
-        <form id="form">
+                    <table class="table" align="center" id="2">
+                        <thead>
+                            <tr>
+                                <th>2. 您的工作是否涉及实验室生物安全？</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="issafe" value="A"> 是</td></tr>
+                        <tr><td><input type="radio" name="issafe" value="B"> 否</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="2">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <h1 align="center" style="margin-top: 50px">在线测试</h1>
-            <h5 align="center">本测试不收集任何个人信息</h5>
+                    <table class="table" align="center" id="3">
+                        <thead>
+                            <tr>
+                                <th>3. 目前的职业是否涉及实验室具体操作？</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="isoperation" value="A"> 是</td></tr>
+                        <tr><td><input type="radio" name="isoperation" value="B"> 否</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="3">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <table class="table" align="center" id="1">
-                <thead>
-                    <tr>
-                        <th>1. 您目前所从事的专业（可多选）：</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="checkbox" name="career" value="A"> 临床医学</td></tr>
-                <tr><td><input type="checkbox" name="career" value="B"> 基础医学相关专业</td></tr>
-                <tr><td><input type="checkbox" name="career" value="C"> 生物学相关专业</td></tr>
-                <tr><td><input type="checkbox" name="career" value="D"> 生物安全相关</td></tr>
-                <tr><td><input type="checkbox" name="career" value="E"> 其他</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="1">下一题</button>
-                    </td>
-                </tr>
-            </table>
+                    <table class="table" align="center" id="4">
+                        <thead>
+                            <tr>
+                                <th>4. 目前的职业是否涉及实验室管理？</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="ismanager" value="A"> 是</td></tr>
+                        <tr><td><input type="radio" name="ismanager" value="B"> 否</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="4">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <table class="table" align="center" id="2">
-                <thead>
-                    <tr>
-                        <th>2. 目前的职业是否涉及实验室具体操作？</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="radio" name="isoperation" value="A"> 是</td></tr>
-                <tr><td><input type="radio" name="isoperation" value="B"> 否</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="2">下一题</button>
-                    </td>
-                </tr>
-            </table>
+                    <table class="table" align="center" id="5">
+                        <thead>
+                            <tr>
+                                <th>5. 涉及实验室的生物安全等级（可多选）：</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="checkbox" name="lab" value="A"> 生物安全一级实验室</td></tr>
+                        <tr><td><input type="checkbox" name="lab" value="B"> 生物安全二级实验室</td></tr>
+                        <tr><td><input type="checkbox" name="lab" value="C"> 生物安全三级实验室</td></tr>
+                        <tr><td><input type="checkbox" name="lab" value="D"> 生物安全四级实验室</td></tr>
+                        <tr><td><input type="checkbox" name="lab" value="E"> 不清楚</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="5">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <table class="table" align="center" id="3">
-                <thead>
-                    <tr>
-                        <th>3. 目前的职业是否涉及实验室管理？</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="radio" name="ismanager" value="A"> 是</td></tr>
-                <tr><td><input type="radio" name="ismanager" value="B"> 否</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="3">下一题</button>
-                    </td>
-                </tr>
-            </table>
+                    <table class="table" align="center" id="6">
+                        <thead>
+                            <tr>
+                                <th>6. 从事目前职业的年数：</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="workyear" value="A"> 小于1年</td></tr>
+                        <tr><td><input type="radio" name="workyear" value="B"> 1-5年</td></tr>
+                        <tr><td><input type="radio" name="workyear" value="C"> 5-10年</td></tr>
+                        <tr><td><input type="radio" name="workyear" value="D"> 10年以上</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="6">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <table class="table" align="center" id="4">
-                <thead>
-                    <tr>
-                        <th>4. 涉及实验室的生物安全等级（可多选）：</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="checkbox" name="lab" value="A"> 生物安全一级实验室</td></tr>
-                <tr><td><input type="checkbox" name="lab" value="B"> 生物安全二级实验室</td></tr>
-                <tr><td><input type="checkbox" name="lab" value="C"> 生物安全三级实验室</td></tr>
-                <tr><td><input type="checkbox" name="lab" value="D"> 生物安全四级实验室</td></tr>
-                <tr><td><input type="checkbox" name="lab" value="E"> 不清楚</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="4">下一题</button>
-                    </td>
-                </tr>
-            </table>
+                    <table class="table" align="center" id="7">
+                        <thead>
+                            <tr>
+                                <th>7. 是否进行过实验室生物安全培训：</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="istrain" value="A"> 是</td></tr>
+                        <tr><td><input type="radio" name="istrain" value="B"> 否</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="7">
+                                    下一题</button>
+                            </td>
+                        </tr>
+                    </table>
 
-            <table class="table" align="center" id="5">
-                <thead>
-                    <tr>
-                        <th>5. 从事目前职业的年数：</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="radio" name="workyear" value="A"> 小于1年</td></tr>
-                <tr><td><input type="radio" name="workyear" value="B"> 1-5年</td></tr>
-                <tr><td><input type="radio" name="workyear" value="C"> 5-10年</td></tr>
-                <tr><td><input type="radio" name="workyear" value="D"> 10年以上</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="5">下一题</button>
-                    </td>
-                </tr>
-            </table>
+                    <table class="table" align="center" id="8">
+                        <thead>
+                            <tr>
+                                <th>8. 最近一次进行实验室生物安全培训的时间：</th>
+                            </tr>
+                        </thead>
+                        <tr><td><input type="radio" name="traintime" value="A"> 1年内</td></tr>
+                        <tr><td><input type="radio" name="traintime" value="B"> 1-5年内</td></tr>
+                        <tr><td><input type="radio" name="traintime" value="C"> 超过5年</td></tr>
+                        <tr align="right">
+                            <td class="noHover">
+                                <button class="btn btn-primary" type="button" onclick='addUser()' value="8">提交</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
 
-            <table class="table" align="center" id="6">
-                <thead>
-                    <tr>
-                        <th>6. 是否进行过实验室生物安全培训：</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="radio" name="istrain" value="A"> 是</td></tr>
-                <tr><td><input type="radio" name="istrain" value="B"> 否</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="6">下一题</button>
-                    </td>
-                </tr>
-            </table>
-
-            <table class="table" align="center" id="7">
-                <thead>
-                    <tr>
-                        <th>7. 最近一次进行实验室生物安全培训的时间：</th>
-                    </tr>
-                </thead>
-                <tr><td><input type="radio" name="traintime" value="A"> 1年内</td></tr>
-                <tr><td><input type="radio" name="traintime" value="B"> 1-5年内</td></tr>
-                <tr><td><input type="radio" name="traintime" value="C"> 超过5年</td></tr>
-                <tr align="right">
-                    <td class="noHover">
-                        <button class="btn btn-primary" type="button" onclick='addUser()' value="7">提交</button>
-                    </td>
-                </tr>
-            </table>
-        </form>
+        </div>
     </div>
 
 
@@ -185,8 +218,8 @@
 
                 $("td").click(function () {
 
-                    var t =$(this).find("input").prop("type");
-                    if(t == "checkbox"){
+                    var t = $(this).find("input").prop("type");
+                    if (t == "checkbox") {
                         if ($(this).find("input").prop("checked")) {
                             $(this).find("input").prop("checked", false);
                             $(this).removeClass("selected");
@@ -194,18 +227,19 @@
                             $(this).find("input").prop("checked", true);
                             $(this).addClass("selected");
                         }
-                    }else{
+                    } else if (t == "radio") {
                         var name = $(this).find("input").prop("name");
-                        $("input[name="+name+"]").parents("td").removeClass("selected");
+                        $("input[name=" + name + "]").parents("td").removeClass("selected");
                         $(this).find("input").prop("checked", true);
                         $(this).addClass("selected");
                     }
 
                     var v = $(this).find("input[name=istrain]:checked").val();
+
                     if (v == "B") {
-                        $("#6").find("button").empty().html("提交");
-                    } else {
-                        $("#6").find("button").empty().html("下一题");
+                        $("#7").find("button").empty().html("提交");
+                    } else if (v == "A") {
+                        $("#7").find("button").empty().html("下一题");
                     }
 
                 });
@@ -213,44 +247,36 @@
                 $("button").attr("disabled", true);
 
                 buttonDisplay("career", 1);
-                buttonDisplay("isoperation", 2);
-                buttonDisplay("ismanager", 3);
-                buttonDisplay("lab", 4);
-                buttonDisplay("workyear", 5);
-                buttonDisplay("istrain", 6);
-                buttonDisplay("traintime", 7);
+                buttonDisplay("issafe",2);
+                buttonDisplay("isoperation", 3);
+                buttonDisplay("ismanager", 4);
+                buttonDisplay("lab", 5);
+                buttonDisplay("workyear", 6);
+                buttonDisplay("istrain", 7);
+                buttonDisplay("traintime", 8);
 
                 $("#1").show();
             });
 
 
-            function rebackHome() {
-                swal({
-                    title: "",
-                    text: "确认放弃答题回到首页？",
-                    type: "warning",
-                    showCancelButton: true,
-                    showConfirmButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "确定",
-                    closeOnConfirm: true,
-                    cancelButtonText: "取消"
-                },function () {
-                    window.location.replace("@routes.QuestionController.userBefore()")
-
-                })
-            }
-
+            /**
+             *
+             * param name : 选项input[name=name]
+             * param id : 第几题
+             */
             function buttonDisplay(name, id) {
                 $("td").bind("click", function () {
                     var array = [];
                     var t = $("input[name=" + name + "]").prop("type");
-                    if (t === "checkbox") {
+                    if (t == "checkbox") {
                         $("input[name=" + name + "]:checkbox:checked").each(function () {
                             array.push($(this).val())
                         });
                     } else {
-                        array.push($("input[name=" + name + "]:radio:checked").val());
+                        var value = $("input[name=" + name + "]:radio:checked").val();
+                        if (value != undefined) {
+                            array.push(value);
+                        }
                     }
                     if (array.length > 0) {
                         $("#" + id).find("button").attr("disabled", false);
@@ -264,17 +290,25 @@
             function nextQuestion(obj) {
                 var i = obj.value;
                 $("#" + i).hide();
-                if (i == "3") {
-                    var q2 = $("input[name=isoperation]:radio:checked").val();
-                    var q3 = $("input[name=ismanager]:radio:checked").val();
-                    if (q2 == "A" && q3 == "A") {
+                if(i == "2"){
+                    var q2 = $("input[name=issafe]:radio:checked").val();
+                    if (q2 == "A") {
                         $("#" + (Number(i) + 1)).show();
                     } else {
                         $("#" + (Number(i) + 2)).show();
                     }
-                } else if (i == "6") {
-                    var q6 = $("input[name=istrain]:radio:checked").val();
-                    if (q6 == "A") {
+
+                }else if (i == "4") {
+                    var q3 = $("input[name=isoperation]:radio:checked").val();
+                    var q4 = $("input[name=ismanager]:radio:checked").val();
+                    if (q3 == "A" || q4 == "A") {
+                        $("#" + (Number(i) + 1)).show();
+                    } else {
+                        $("#" + (Number(i) + 2)).show();
+                    }
+                } else if (i == "7") {
+                    var q7 = $("input[name=istrain]:radio:checked").val();
+                    if (q7 == "A") {
                         $("#" + (Number(i) + 1)).show();
                     } else {
                         addUser();
@@ -306,18 +340,20 @@
                     dataType: "json",
                     data: {
                         "career": career,
-                        "isoperation": $("#2").find('input:radio:checked').val(),
-                        "ismanager": $("#3").find('input:radio:checked').val(),
+                        "issafe": $("#2").find('input:radio:checked').val(),
+                        "isoperation": $("#3").find('input:radio:checked').val(),
+                        "ismanager": $("#4").find('input:radio:checked').val(),
                         "lab": lab,
-                        "workyear": $("#5").find('input:radio:checked').val(),
-                        "istrain": $("#6").find('input:radio:checked').val(),
-                        "traintime": $("#7").find('input:radio:checked').val()
+                        "workyear": $("#6").find('input:radio:checked').val(),
+                        "istrain": $("#7").find('input:radio:checked').val(),
+                        "traintime": $("#8").find('input:radio:checked').val()
                     },
                     success: function (data) {
                         if (data.valid == "false") {
                             swal("error", data.message);
                         } else {
                             window.location.replace("/answerBefore?id=" + data.id);
+                            sessionStorage.clear();
                         }
                     }
                 })

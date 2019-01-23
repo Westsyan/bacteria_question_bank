@@ -22,12 +22,15 @@
 
   </head>
  @* <body  oncontextmenu=self.event.returnValue=false onselectstart="return false">*@
-  <body  oncontextmenu="return false" onselectstart="return false">
-    <div class="container">
+  <body  oncontextmenu="return false" onselectstart="return false" style="background-color: #F6F6F6">
+
+
+    <div class="container" style="background-color: white">
 
       <script src="@routes.Assets.at("bootstrap/js/jquery-3.1.1.min.js")" type="text/javascript"></script>
       <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
       <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+      <script src="@routes.Assets.at("javascripts/my.js")" type="text/javascript"></script>
       <script src="@routes.Assets.at("javascripts/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
       <script src="@routes.Assets.at("select2-4.0.3/dist/js/select2.full.min.js")" type="text/javascript"></script>
       <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrapvalidator-master/dist/css/bootstrapValidator.min.css")">
@@ -50,12 +53,9 @@
       @home.header()
       </header>
 
-      <div class="panel panel-default" style="margin: 20px">
 
-      <div class="panel-body" style="height: 730px">
       @content
-      </div>
-      </div>
+
 
     <footer>
       @home.footer()

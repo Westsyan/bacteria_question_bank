@@ -4,12 +4,16 @@
     <style>
 
             .portlet.box.blue-soft {
-                border: 1px solid #FF7E23;
+                border: 1px solid #3D7DBA;
             }
 
             .portlet.box.blue-soft > .portlet-title {
-                background-color: #FF7E23;
+                background-color: #3D7DBA;
             }
+
+        .condition-display{
+      /*      display: none;*/
+        }
 
     </style>
 
@@ -29,30 +33,41 @@
                                 <option value="A">临床医学</option>
                                 <option value="B">基础医学相关专业</option>
                                 <option value="C">生物学相关专业</option>
-                                <option value="D">生物安全相关</option>
-                                <option value="E">其他</option>
+                                <option value="D">其他</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group col-sm-12">
                         <div class="col-sm-3" align="right">
-                            <label>是否涉及实验室具体操作</label>
+                            <label>是否涉及实验室生物安全</label>
                         </div>
                         <div class="col-sm-2">
-                            <select class="form-control" name="isoperation">
-                                <option>是</option>
-                                <option>否</option>
+                            <select class="form-control" name="issafe">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
                             </select>
                         </div>
 
                         <div class="col-sm-2" align="right">
+                            <label>是否涉及实验室具体操作</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="isoperation">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <div class="col-sm-3" align="right">
                             <label>是否涉及实验室管理</label>
                         </div>
                         <div class="col-sm-2">
                             <select class="form-control" name="ismanager">
-                                <option>是</option>
-                                <option>否</option>
+                                <option value="A">是</option>
+                                <option value="B">否</option>
                             </select>
                         </div>
                     </div>
@@ -63,11 +78,11 @@
                         </div>
                         <div class="col-sm-6">
                             <select class="form-control" name="lab[]" multiple>
-                                <option>生物安全一级实验室</option>
-                                <option>生物安全二级实验室</option>
-                                <option>生物安全三级实验室</option>
-                                <option>生物安全四级实验室</option>
-                                <option>不清楚</option>
+                                <option value="A">生物安全一级实验室</option>
+                                <option value="B">生物安全二级实验室</option>
+                                <option value="C">生物安全三级实验室</option>
+                                <option value="D">生物安全四级实验室</option>
+                                <option value="E">不清楚</option>
                             </select>
                         </div>
                     </div>
@@ -78,10 +93,10 @@
                         </div>
                         <div class="col-sm-2">
                             <select class="form-control" name="workyear">
-                                <option>小于1年</option>
-                                <option>1-5年</option>
-                                <option>5-10年</option>
-                                <option>10年以上</option>
+                                <option value="A">小于1年</option>
+                                <option value="B">1-5年</option>
+                                <option value="C">5-10年</option>
+                                <option value="D">10年以上</option>
                             </select>
                         </div>
 
@@ -90,8 +105,8 @@
                         </div>
                         <div class="col-sm-2" bn>
                             <select class="form-control" name="istrain">
-                                <option>是</option>
-                                <option>否</option>
+                                <option value="A">是</option>
+                                <option value="B">否</option>
                             </select>
                         </div>
                     </div>
@@ -102,16 +117,16 @@
                         </div>
                         <div class="col-sm-2">
                             <select class="form-control" name="traintime">
-                                <option>1年内</option>
-                                <option>1-5年内</option>
-                                <option>超过5年</option>
+                                <option value="A">1年内</option>
+                                <option value="B">1-5年内</option>
+                                <option value="C">超过5年</option>
                             </select>
                         </div>
 
 
                         <div class = "actions indent col-sm-3  col-sm-offset-1">
                             <button type="button" class="btn btn-primary" style="width: 100%;
-                                background-color: #FF7E23;" id="search" onclick="filter()">
+                                background-color: #3D7DBA;" id="search" onclick="filter()">
                                 筛选</button>
                         </div>
 
@@ -130,11 +145,40 @@
                         </div>
                     </div>
 
-                    <div class="portlet-body" style="height: 500px;">
+                    <div class="portlet-body">
+
+
                         <label>符合条件人数 ： </label><span id="person"> </span>
 
+
                         <div id="container" style="min-width: 400px;
-                            min-height: 400px"></div>
+                            min-height: 400px;max-width: 98%"></div>
+
+
+                        <div id="toolbar"></div>
+                        <table class="table table-bordered table-hover " id="table" data-toolbar="#toolbar"
+                        data-show-export="true" data-export-types="['excel']" data-export-data-type="all"
+                        data-export-options='{"fileName":"题库统计"}'>
+                            <thead>
+                                <tr>
+                                    <th data-field="q0">类型</th>
+                                    <th data-field="q1">生物安全相关法律法规</th>
+                                    <th data-field="q2">生物危害因子的风险评估</th>
+                                    <th data-field="q3">生物安全实验室的分级及管理</th>
+                                    <th data-field="q4">生物安全实验室设施</th>
+                                    <th data-field="q5">生物安全实验室关键设备</th>
+                                    <th data-field="q6">消毒灭菌及废物处理</th>
+                                    <th data-field="q7">突发事故的处理和应急预案</th>
+                                    <th data-field="q8">实验室个人防护</th>
+                                    <th data-field="q9">菌毒种运输及管理</th>
+                                    <th data-field="q10">实验操作</th>
+                                </tr>
+                            </thead>
+                        </table>
+
+
+                        @*      <button type="button" class="btn btn-primary" style="width: 10%;
+                            background-color: #3D7DBA;margin-left: 10px" onclick="downloadExcel()">下载</button>*@
 
                     </div>
                 </div>
@@ -143,7 +187,12 @@
     </div>
 
     <script>
+
+
+        var excel = "";
+
             $(function () {
+
 
                 $(".form-control").val("").select2();
 
@@ -153,9 +202,36 @@
                     allowClear: true
                 });
 
-                filter();
+                var index = layer.load(1);
+                $.ajax({
+                    url: "@routes.BackgroundController.getFilterResult()",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#form").serialize(),
+                    success : function (data) {
+                        $("#person").text(data.person + "人");
+                        column(data.base, data.speziell);
+                        $("#table").bootstrapTable({data:data.data});
+                        var hideRows = [2,3,4,5,6,7,8,9,10,11];
+                        $.each(hideRows,function (i,v) {
+                            $("#table").bootstrapTable("hideRow",{index:v});
+                        });
+                        layer.close(index);
+                    }
+
+                })
 
             });
+
+
+            function downloadExcel() {
+                var fileName = "统计结果.xls";
+                var content = excel;
+                var blob = new Blob([content], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+                });
+                saveAs(blob, fileName)
+            }
 
 
             function filter() {
@@ -168,6 +244,11 @@
                     success : function (data) {
                         $("#person").text(data.person + "人");
                         column(data.base, data.speziell);
+                        $("#table").bootstrapTable("load",data.data);
+                        var hideRows = [2,3,4,5,6,7,8,9,10,11];
+                        $.each(hideRows,function (i,v) {
+                            $("#table").bootstrapTable("hideRow",{index:v});
+                        });
                         layer.close(index);
                     }
 
@@ -193,6 +274,9 @@
                         title: {
                             text: '正确率'
                         }
+                    },
+                    exporting:{
+                        enabled:false
                     },
                     tooltip: {
                         // head + 每个 point + footer 拼接成完整的 table

@@ -4,11 +4,11 @@
     <style>
 
             .portlet.box.blue-soft {
-                border: 1px solid #FF7E23;
+                border: 1px solid #3D7DBA;
             }
 
             .portlet.box.blue-soft > .portlet-title {
-                background-color: #FF7E23;
+                background-color: #3D7DBA;
             }
 
     </style>
@@ -24,6 +24,16 @@
 
                     <div class="form-group col-sm-12">
                         <div class="col-sm-3" align="right">
+                            <label>是否涉及实验室生物安全</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="issafe">
+                                <option value="A">是</option>
+                                <option value="B">否</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" align="right">
                             <label>是否涉及实验室具体操作</label>
                         </div>
                         <div class="col-sm-2">
@@ -32,8 +42,12 @@
                                 <option value="B">否</option>
                             </select>
                         </div>
+                    </div>
 
-                        <div class="col-sm-2" align="right">
+                    <div class="form-group col-sm-12">
+
+
+                        <div class="col-sm-3" align="right">
                             <label>是否涉及实验室管理</label>
                         </div>
                         <div class="col-sm-2">
@@ -98,7 +112,7 @@
 
                         <div class = "actions indent col-sm-3  col-sm-offset-1">
                             <button type="button" class="btn btn-primary" style="width: 100%;
-                                background-color: #FF7E23;" id="search" onclick="filter()">
+                                background-color: #3D7DBA;" id="search" onclick="filter()">
                                 筛选</button>
                         </div>
 
@@ -126,7 +140,10 @@
                         </div>
 
                         <div style="width: 26%;float: left;margin-left: 2%">
-                            <table class="table" id="table">
+                            <div id="toolbar"></div>
+                            <table class="table" id="table" data-toolbar="#toolbar" data-show-export="true"
+                            data-export-types="['excel']" data-export-data-type="all"
+                            data-export-options='{"fileName":"统计结果"}'>
                                 <thead>
                                     <tr>
                                         <th data-field="career">背景</th>
@@ -186,8 +203,6 @@
                         $("#table").bootstrapTable({data:data.tableData});
                         column(data.perCor,data.perFal);
                         $("#stat").html(data.stat);
-                        layer.close(index);
-
                     }
                 });
 
@@ -219,7 +234,7 @@
                         text: '结果统计'
                     },
                     xAxis: {
-                        categories: ['临床医学', '基础医学相关专业', '生物学相关专业',"生物安全相关", "其他"],
+                        categories: ['临床医学', '基础医学相关专业', '生物学相关专业', "其他"],
                         crosshair: true
                     },
                     yAxis: {
@@ -228,6 +243,9 @@
                         title: {
                             text: '正确率'
                         }
+                    },
+                    exporting:{
+                        enabled:false
                     },
                     tooltip: {
                         // head + 每个 point + footer 拼接成完整的 table
