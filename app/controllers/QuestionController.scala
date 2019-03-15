@@ -22,12 +22,12 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
     Ok(views.html.question.userPage()).withNewSession
   }
 
-  case class userData(career: Seq[String],issafe:String, isoperation: Option[String], ismanager: String, lab: Option[Seq[String]],
+  case class userData(career: String,issafe:String, isoperation: Option[String], ismanager: String, lab: Option[Seq[String]],
                       workyear: String, istrain: String, traintime: Option[String])
 
   val userForm = Form(
     mapping(
-      "career" -> seq(text),
+      "career" -> text,
       "issafe" -> text,
       "isoperation" -> optional(text),
       "ismanager" -> text,
@@ -46,7 +46,7 @@ class QuestionController @Inject()(questiondao: questionDao, userdao: userDao, r
 
     try {
       val data = userForm.bindFromRequest.get
-      val career = data.career.mkString(",")
+      val career = data.career
       val issafe = data.issafe
       val isoperation = data.isoperation.getOrElse("")
       val ismanager = data.ismanager

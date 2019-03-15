@@ -17,7 +17,7 @@
             </div>
         </a>
         @if(!session.get("admin").isEmpty) {
-            <a href="#" class="page-option">
+            <a href="@routes.BackgroundController.backgroundBefore()" class="page-option">
                 <div class="page-menu-left action" >
                     <div style="margin-top: 5px">
                         <i class="fa fa-bar-chart logo-left" style="font-size: 20px"></i>

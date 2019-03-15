@@ -118,12 +118,12 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
   }
 
 
-  case class userFilterData(career: Option[Seq[String]],issafe:Option[String], isoperation: Option[String], ismanager: Option[String],
+  case class userFilterData(career: Option[String],issafe:Option[String], isoperation: Option[String], ismanager: Option[String],
                             lab: Option[Seq[String]], workyear: Option[String], istrain: Option[String], traintime: Option[String])
 
   val userFilterForm = Form(
     mapping(
-      "career" -> optional(seq(text)),
+      "career" -> optional(text),
       "issafe" -> optional(text),
       "isoperation" -> optional(text),
       "ismanager" -> optional(text),
@@ -149,9 +149,10 @@ class BackgroundController @Inject()(questiondao: questionDao, userdao: userDao,
     val x = Await.result(resultdao.getByUserIds(id), Duration.Inf)
     val result = getCharts(x)
     val datas = result._1.zip(result._2).map(x => Array(x._1 + "%", x._2 + "%"))
-    val q0 = Array("基础知识题", "专业知识题", "","","符合条件人数", "所事专业", "是否涉及实验室具体操作", "是否涉及实验室管理", "涉及实验室的生物安全等级"
-      , "从事目前职业的年数", "是否进行过实验室生物安全培训", "最近一次进行实验室生物安全培训的时间")
-    val q1 = datas.head ++ Array("","",result._3.toString,career.getOrElse(Seq("")).map(x=>getCareer(x)).mkString(","),
+    val q0 = Array("基础知识题", "专业知识题", "","","符合条件人数", "所事专业", "是否涉及实验室生物安全",
+      "是否涉及实验室具体操作", "是否涉及实验室管理", "涉及实验室的生物安全等级", "从事目前职业的年数",
+      "是否进行过实验室生物安全培训", "最近一次进行实验室生物安全培训的时间")
+    val q1 = datas.head ++ Array("","",result._3.toString,getCareer(career.getOrElse("")),getIsOrNo(issafe.getOrElse("")),
       getIsOrNo(isoperation.getOrElse("")), getIsOrNo(ismanager.getOrElse("")),
       lab.getOrElse(Seq("")).map(x=>getLab(x)).mkString(","), getWorkyear(workyear.getOrElse("")),
       getIsOrNo(istrain.getOrElse("")), getTraintime(traintime.getOrElse("")))

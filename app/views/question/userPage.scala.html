@@ -61,13 +61,13 @@
                     <table class="table" align="center" id="1">
                         <thead>
                             <tr>
-                                <th>1. 您目前所从事的专业（可多选）：</th>
+                                <th>1. 您目前所从事的专业：</th>
                             </tr>
                         </thead>
-                        <tr><td><input type="checkbox" name="career" value="A"> 临床医学</td></tr>
-                        <tr><td><input type="checkbox" name="career" value="B"> 基础医学相关专业</td></tr>
-                        <tr><td><input type="checkbox" name="career" value="C"> 生物学相关专业</td></tr>
-                        <tr><td><input type="checkbox" name="career" value="D"> 其他</td></tr>
+                        <tr><td><input type="radio" name="career" value="A"> 临床医学</td></tr>
+                        <tr><td><input type="radio" name="career" value="B"> 基础医学相关专业</td></tr>
+                        <tr><td><input type="radio" name="career" value="C"> 生物学相关专业</td></tr>
+                        <tr><td><input type="radio" name="career" value="D"> 其他</td></tr>
                         <tr align="right">
                             <td class="noHover">
                                 <button class="btn btn-primary" type="button" onclick='nextQuestion(this)' value="1">
@@ -322,14 +322,14 @@
 
             function addUser() {
 
-                var career = [];
+/*                var career = [];
                 $("#1").find(":checkbox:checked").each(function () {
                     //在array的后面加上新的元素
                     career.push($(this).val())
-                });
+                });*/
 
                 var lab = [];
-                $("#4").find(":checkbox:checked").each(function () {
+                $("#5").find(":checkbox:checked").each(function () {
                     //在array的后面加上新的元素
                     lab.push($(this).val())
                 });
@@ -339,7 +339,7 @@
                     type: "post",
                     dataType: "json",
                     data: {
-                        "career": career,
+                        "career": $("#1").find('input:radio:checked').val(),
                         "issafe": $("#2").find('input:radio:checked').val(),
                         "isoperation": $("#3").find('input:radio:checked').val(),
                         "ismanager": $("#4").find('input:radio:checked').val(),

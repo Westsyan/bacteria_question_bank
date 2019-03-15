@@ -22,7 +22,7 @@ class userDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) 
     db.run(User.filter(_.id === id).result.head)
   }
 
-  def getUserByPosition(career : Option[Seq[String]],issafe:Option[String], isoperation: Option[String], ismanager: Option[String], lab: Option[Seq[String]],
+  def getUserByPosition(career : Option[String],issafe:Option[String], isoperation: Option[String], ismanager: Option[String], lab: Option[Seq[String]],
                         workyear: Option[String], istrain: Option[String], traintime: Option[String]) : Future[Seq[Int]] = {
     val isca = career.isEmpty
     val issa = issafe.isEmpty
@@ -32,7 +32,7 @@ class userDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) 
     val iswo = workyear.isEmpty
     val istr = istrain.isEmpty
     val isti = traintime.isEmpty
-    db.run(User.filter(_.career === career.getOrElse(Seq("")).mkString(",") || isca).filter(_.issafe === issafe.getOrElse("") || issa)
+    db.run(User.filter(_.career === career.getOrElse("") || isca).filter(_.issafe === issafe.getOrElse("") || issa)
       .filter(_.isoperation === isoperation.getOrElse("") || isop).
       filter(_.ismanager === ismanager.getOrElse("") || isma).filter(_.lab === lab.getOrElse(Seq("")).mkString(",") || isla).
       filter(_.workyear === workyear.getOrElse("") || iswo).filter(_.istrain === istrain.getOrElse("") || istr).
